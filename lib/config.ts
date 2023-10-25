@@ -2,7 +2,8 @@ const config = {
     title: "devbook",
     titleWithSeparator: " - devbook",
     apiUrl: "/api",
-    baseUrl: "http://localhost:3000"
+    baseUrl: "http://localhost:3000",
+    api: "http://localhost:4001"
 };
 
 
