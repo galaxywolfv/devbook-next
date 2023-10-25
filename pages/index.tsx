@@ -29,9 +29,6 @@ export default function Home() {
         <section className="bg-white overflow-hidden">
           <div className="flex flex-col lg:flex-row lg:items-stretch lg:min-h-[800px]">
             <div className="relative flex items-center justify-center w-full lg:order-2 lg:w-7/12">
-              <div className="absolute bottom-0 right-0 hidden lg:block">
-                <img className="object-contain w-auto h-48" src="./curved-lines.png" alt="" />
-              </div>
               <div className="relative px-4 pt-24 pb-16 text-center sm:px-6 md:px-24 2xl:px-32 lg:py-24 lg:text-left">
                 <h1 className="text-4xl font-bold text-black sm:text-6xl xl:text-8xl">
                   Where Knowledge Comes to Life.
