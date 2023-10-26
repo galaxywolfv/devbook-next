@@ -1,12 +1,30 @@
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import config from '@/lib/config';
 import useAuthentication from '@/lib/hooks/useAuthentication';
 import Navbar from '@/components/navbar';
+import { motion } from 'framer-motion';
+import { Book } from '@/lib/types';
+import usePublishedBooks from '@/lib/hooks/usePublishedBooks';
 
 const MyPublishedBooks = () => {
     const { auth } = useAuthentication();
+    const { fetchMyPublishedBooks, isLoading } = usePublishedBooks();
+    const [myPublishedBooks, setMyPublishedBooks] = useState<Book[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const books = await fetchMyPublishedBooks();
+                if (books) setMyPublishedBooks(books);
+            } catch (error) {
+                console.error('Error retrieving published books:', error);
+            }
+        };
+
+        fetchData();
+    }, [auth]);
 
     return (
         <>
@@ -23,6 +41,48 @@ const MyPublishedBooks = () => {
                 <meta name="theme-color" content="#ffffff" />
             </Head>
             <Navbar></Navbar>
+            <div className="w-full flex justify-center">
+                <div className="max-w-4xl w-full relative overflow-x-auto shadow-md sm:p-2 mt-20">
+                    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" className="px-6 py-4 whitespace-nowrap">
+                                    Title
+                                </th>
+                                <th scope="col" className="px-6 py-4 whitespace-nowrap">
+                                    Description
+                                </th>
+                                <th scope="col" className="px-6 py-4 whitespace-nowrap">
+                                    Author
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {!isLoading &&
+                                (
+                                    myPublishedBooks.map((book: Book) => {
+                                        const { _id, title, author, description } = book;
+
+                                        return (
+                                            <tr key={_id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover-bg-gray-600">
+                                                <motion.th layoutId={_id} scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                    <Link href={`/books/${_id}`}>{title}</Link>
+                                                </motion.th>
+                                                <motion.td layoutId={description} className="px-6 py-4 whitespace-nowrap">
+                                                    {description}
+                                                </motion.td>
+                                                <motion.td layoutId={author} className="px-6 py-4 whitespace-nowrap">
+                                                    <Link href={`/published-books/${author}`}>{author}</Link>
+                                                </motion.td>
+                                            </tr>
+                                        );
+                                    })
+                                )
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </>)
 }
 export default MyPublishedBooks;
