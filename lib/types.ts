@@ -4,3 +4,9 @@ export type Book = {
     author: string,
     description: string
 }
+
+export enum Role {
+    admin = 0,
+    author = 1,
+    default = 2,
+}

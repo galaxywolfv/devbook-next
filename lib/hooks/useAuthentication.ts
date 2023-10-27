@@ -7,15 +7,16 @@ function useAuthentication() {
   const router = useRouter();
 
   const [auth, setAuth] = useState(false);
-  const [token, setToken] = useState('');
+  const [role, setRole] = useState(config.role);
+  const [username, setUsername] = useState('');
+  const [token, setToken] = useState(typeof window !== 'undefined' ? localStorage.getItem('token') : null);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    if (storedToken) {
+    if (token) {
       setAuth(true);
-      setToken(storedToken);
+      fetchSelf(token);
     }
-  }, []);
+  }, [token]);
 
   const login = async (username: string, password: string) => {
     try {
@@ -54,7 +55,18 @@ function useAuthentication() {
     setToken('');
   };
 
-  return { auth, token, login, register, logout };
+  const fetchSelf = async (storedToken: string) => {
+    const response = await axios.get(`${config.api}/user/get-self`, {
+      headers: {
+        bearer: storedToken,
+      }
+    });    
+
+    setRole(response.data.role)
+    setUsername(response.data.username)
+  }
+
+  return { auth, role, username, token, login, register, logout };
 }
 
 export default useAuthentication;

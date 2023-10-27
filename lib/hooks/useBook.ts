@@ -1,51 +1,77 @@
-import { useContext, useEffect, useState } from "react";
 import config from "../config";
 import axios from 'axios'
 import { useNotification } from "./useNotification";
-import { Context } from "@/Context";
-import handler from "@/pages/api/hello";
-import { NextApiRequest, NextApiResponse } from "next";
+import useAuthentication from "./useAuthentication";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { Book } from "../types";
 
 // Custom React hook for managing courses data
-function useAnime(token = '') {
+function useBook() {
   const { onSuccess, onError } = useNotification()
+  const { token } = useAuthentication();
+  const router = useRouter();
+  const [book, setBook] = useState<Book>();
 
-  const [recentData, setRecentData] = useState<[]>([]);
-
-  const { setRecent } = useContext(Context);
-  const { setPopular } = useContext(Context);
-  const { setRecentPicks } = useContext(Context);
-  const { setHistory } = useContext(Context);
-  const { setList } = useContext(Context);
-  const { setSearch } = useContext(Context);
-
-  useEffect(() => {
-
-  }, [])
-
-  const getRecent = async (token: string) => {
+  const fetchBook = async (bookId: string) => {
     try {
-      const req: NextApiRequest = {} as NextApiRequest; // You can provide the appropriate request object here
-      const res: NextApiResponse = {
-        status: (statusCode) => ({
-          json: (data) => {
-            setRecentData(data)
-
-            // Handle the data returned by the handler function
-            console.log(data); // Should print the response from the handler function
+      if (token) {
+        const response = await axios.post(`${config.api}/book/get/${bookId}`, {}, {
+          headers: {
+            bearer: token,
           },
-        }),
-      } as NextApiResponse;
+        });        
+        setBook(response.data)
+        return book;
+      }
+    } catch (error) {
+      console.error('Error retrieving book:', error);
+    }
+  };
 
-      // Call the handler function directly
-      handler(req, res);
+  const deleteBook = async (bookId: string) => {
+    try {
+      const response = await axios.delete(`${config.api}/book/delete/${bookId}`,
+        {
+          headers: {
+            bearer: token,
+          },
+        }
+      );
+      onSuccess(`Succesfully deleted "${response.data.title}"`)
     } catch (error) {
       console.log(error)
       onError("Something went wrong")
     }
   }
 
-  return { recentData, getRecent };
+  const createBook = async (title: string, description: string) => {
+    try {
+      await axios.post(`${config.api}/book/save`, { title, description }, {
+        headers: {
+          bearer: token,
+        },
+      });
+      router.replace("/published-books");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const editBook = async (bookId: string, title: string, description: string) => {
+    try {
+      await axios.put(`${config.api}/book/update/${bookId}`, { title, description }, {
+        headers: {
+          bearer: token,
+        },
+      });
+      router.replace("/published-books");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return { book, fetchBook, deleteBook, createBook, editBook };
 }
 
-export default useAnime;
+export default useBook;

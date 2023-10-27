@@ -1,35 +1,34 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import config from '../config';
 import useAuthentication from './useAuthentication';
+import { Book } from '../types';
 
 function useBooks() {
-    const [books, setBooks] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const { token } = useAuthentication();
-    
-    useEffect(() => {
-        const fetchBooks = async () => {
-            try {
-                if (token) {
-                    const response = await axios.get(`${config.api}/book/get-all`, {
-                        headers: {
-                            bearer: token,
-                        },
-                    });
-                    setBooks(response.data);
-                }
+    const [books, setBooks] = useState<Book[]>([]);
+
+    const fetchBooks = async () => {
+        try {
+            if (token) {
+                const response = await axios.get(`${config.api}/book/get-all`, {
+                    headers: {
+                        bearer: token,
+                    },
+                });
                 setIsLoading(false);
-            } catch (error) {
-                console.error('Error retrieving books:', error);
-                setIsLoading(false);
+                setBooks(response.data)
+                return books;
             }
-        };
+            setIsLoading(false);
+        } catch (error) {
+            console.error('Error retrieving books:', error);
+            setIsLoading(false);
+        }
+    };
 
-        fetchBooks();
-    }, [token]);
-
-    return { books, isLoading };
+    return { books, fetchBooks, isLoading };
 }
 
 export default useBooks;

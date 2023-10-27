@@ -1,13 +1,8 @@
-import { Context } from '@/Context';
-import useAnime from '@/lib/hooks/useBook';
 import Head from 'next/head';
-import { useContext } from 'react';
 import Navbar from "@/components/navbar"
 import config from '@/lib/config';
 
 export default function Home() {
-  // const { recentAnime: contextRecentAnime } = useContext(Context);
-  // const { recentData: fetchedRecentAnime } = useAnime("");
 
   return (
     <>
