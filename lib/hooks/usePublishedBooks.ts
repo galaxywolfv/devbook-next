@@ -2,10 +2,12 @@ import { useState } from 'react';
 import axios from 'axios';
 import config from '../config';
 import useAuthentication from './useAuthentication';
+import { Book } from '../types';
 
 function usePublishedBooks() {
-    const [isLoading, setIsLoading] = useState(true);
     const { token } = useAuthentication();
+    const [myPublishedBooks, setMyPublishedBooks] = useState<Book[]>([]);
+    const [publishedBooks, setPublishedBooks] = useState<Book[]>([]);
 
     const fetchMyPublishedBooks = async () => {
         try {
@@ -14,13 +16,12 @@ function usePublishedBooks() {
                     headers: {
                         bearer: token,
                     },
-                });                
+                });
+                setMyPublishedBooks(response.data)
                 return response.data;
             }
-            setIsLoading(false);
         } catch (error) {
             console.error('Error retrieving published books:', error);
-            setIsLoading(false);
         }
     };
     const fetchPublishedBooks = async (username: string) => {
@@ -31,16 +32,15 @@ function usePublishedBooks() {
                         bearer: token,
                     },
                 });
+                setPublishedBooks(response.data)
                 return response.data;
             }
-            setIsLoading(false);
         } catch (error) {
             console.error('Error retrieving published books:', error);
-            setIsLoading(false);
         }
     };
 
-    return { fetchMyPublishedBooks, fetchPublishedBooks, isLoading };
+    return { myPublishedBooks, publishedBooks, fetchMyPublishedBooks, fetchPublishedBooks };
 }
 
 export default usePublishedBooks;
