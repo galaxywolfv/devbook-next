@@ -76,7 +76,6 @@ const Books = () => {
                                 <th scope="col" className="px-6 py-4 whitespace-nowrap text-right">
                                     Actions
                                 </th>
-
                             </tr>
                         </thead>
                         <tbody>

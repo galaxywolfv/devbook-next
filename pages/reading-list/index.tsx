@@ -10,22 +10,19 @@ import useSavedBooks from '@/lib/hooks/useSavedBooks';
 
 const MyReadingList = () => {
     const { auth } = useAuthentication();
-    const { fetchMySavedBooks } = useSavedBooks();
-    const [mySavedBooks, setMySavedBooks] = useState<Book[]>([]);
+    const { mySavedBooks, fetchMySavedBooks } = useSavedBooks();
+    const { updateList } = useSavedBooks();
+
+    const addToList = async (book: Book) => {
+        if (auth) {
+            await updateList(book);
+            await fetchMySavedBooks();
+        }
+    };
 
     useEffect(() => {
         if (auth) {
-
-            const fetchData = async () => {
-                try {
-                    const books = await fetchMySavedBooks();
-                    if (books) setMySavedBooks(books);
-                } catch (error) {
-                    console.error('Error retrieving saved books:', error);
-                }
-            };
-
-            fetchData();
+            fetchMySavedBooks();
         }
     }, [auth]);
 
@@ -58,6 +55,9 @@ const MyReadingList = () => {
                                 <th scope="col" className="px-6 py-4 whitespace-nowrap">
                                     Author
                                 </th>
+                                <th scope="col" className="px-6 py-4 whitespace-nowrap text-right">
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -76,6 +76,15 @@ const MyReadingList = () => {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <Link href={`/published-books/${author}`}>{author}</Link>
+
+                                                </td>
+                                                <td className="flex items-center justify-end px-3 py-2 space-x-3">
+                                                    <button onClick={() => addToList(book)} className="flex p-2.5 bg-red-500 rounded-xl hover:rounded-3xl hover:bg-blue-600 transition-all duration-300 text-white">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-5 h-5">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3l1.664 1.664M21 21l-1.5-1.5m-5.485-1.242L12 17.25 4.5 21V8.742m.164-4.078a2.15 2.15 0 011.743-1.342 48.507 48.507 0 0111.186 0c1.1.128 1.907 1.077 1.907 2.185V19.5M4.664 4.664L19.5 19.5" />
+                                                        </svg>
+
+                                                    </button>
                                                 </td>
                                             </tr>
                                         );
@@ -83,6 +92,7 @@ const MyReadingList = () => {
                                 )
                             }
                         </tbody>
+
                     </table>
                 </div>
             </div>

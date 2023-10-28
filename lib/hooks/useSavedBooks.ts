@@ -6,9 +6,9 @@ import { useNotification } from './useNotification';
 import { Book } from '../types';
 
 function useSavedBooks() {
-    const [isLoading, setIsLoading] = useState(true);
     const { token } = useAuthentication();
     const { onSuccess, onError } = useNotification()
+    const [mySavedBooks, setMySavedBooks] = useState<Book[]>([]);
 
     const fetchMySavedBooks = async () => {
         try {
@@ -18,14 +18,14 @@ function useSavedBooks() {
                         bearer: token,
                     },
                 });
+                setMySavedBooks(response.data);
                 return response.data;
             }
-            setIsLoading(false);
         } catch (error) {
             console.error('Error retrieving list:', error);
-            setIsLoading(false);
         }
     };
+
     const fetchSavedBooks = async (username: string) => {
         try {
             if (token) {
@@ -36,10 +36,8 @@ function useSavedBooks() {
                 });
                 return response.data;
             }
-            setIsLoading(false);
         } catch (error) {
             console.error('Error retrieving list:', error);
-            setIsLoading(false);
         }
     };
     const updateList = async (book: Book) => {
@@ -82,7 +80,7 @@ function useSavedBooks() {
 
 
 
-    return { fetchMySavedBooks, fetchSavedBooks, updateList, isLoading };
+    return { mySavedBooks, fetchMySavedBooks, fetchSavedBooks, updateList };
 }
 
 export default useSavedBooks;

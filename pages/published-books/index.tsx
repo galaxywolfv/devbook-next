@@ -6,14 +6,11 @@ import useAuthentication from '@/lib/hooks/useAuthentication';
 import Navbar from '@/components/navbar';
 import { Book, Role } from '@/lib/types';
 import usePublishedBooks from '@/lib/hooks/usePublishedBooks';
-import useSavedBooks from '@/lib/hooks/useSavedBooks';
 import useBook from '@/lib/hooks/useBook';
-import useBooks from '@/lib/hooks/useBooks';
 
 const MyPublishedBooks = () => {
     const { role, auth, username } = useAuthentication();
     const { myPublishedBooks, fetchMyPublishedBooks } = usePublishedBooks();
-    const { updateList } = useSavedBooks();
     const { deleteBook } = useBook();
 
     const [showModal, setShowModal] = React.useState<boolean>(false);
@@ -26,18 +23,13 @@ const MyPublishedBooks = () => {
         }
     };
 
-    const addToList = async (book: Book) => {
-        if (auth) {
-            await updateList(book);
-        }
-    };
     const handleDeleteBook = async (bookId: string, author: string) => {
         if (auth && ((role === Role.admin) || (role === Role.author && username === author))) {
             await deleteBook(bookId);
             await fetchMyPublishedBooks();
         }
     };
-    
+
     useEffect(() => {
         if (auth) {
             fetchMyPublishedBooks();
@@ -112,11 +104,6 @@ const MyPublishedBooks = () => {
                                                                 <button onClick={() => toggleModal(book)} className="flex p-2.5 bg-red-500 rounded-xl hover:rounded-3xl hover:bg-red-600 transition-all duration-300 text-white">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path>
-                                                                    </svg>
-                                                                </button>
-                                                                <button onClick={() => addToList(book)} className="flex p-2.5 bg-blue-500 rounded-xl hover:rounded-3xl hover:bg-blue-600 transition-all duration-300 text-white">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
                                                                     </svg>
                                                                 </button>
                                                             </>
