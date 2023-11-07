@@ -20,7 +20,7 @@ function useBook() {
           headers: {
             bearer: token,
           },
-        });        
+        });
         setBook(response.data)
         return book;
       }
@@ -41,7 +41,7 @@ function useBook() {
       onSuccess(`Succesfully deleted "${response.data.title}"`)
     } catch (error) {
       console.log(error)
-      onError("Something went wrong")
+      onError(`Something went wrong, try again later.`);
     }
   }
 
@@ -53,8 +53,10 @@ function useBook() {
         },
       });
       router.replace("/published-books");
+      onSuccess(`Succesfully published "${title}" to devbook`);
     } catch (error) {
       console.error(error);
+      onError(`Something went wrong, try again later.`);
     }
   };
 
@@ -66,8 +68,10 @@ function useBook() {
         },
       });
       router.replace("/published-books");
+      onSuccess(`Succesfully updated "${title}"`);
     } catch (error) {
       console.error(error);
+      onError(`Something went wrong, try again later.`);
     }
   };
 

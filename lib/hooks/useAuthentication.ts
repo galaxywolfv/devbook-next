@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import config from "../config";
+import { useNotification } from "./useNotification";
 
 function useAuthentication() {
   const router = useRouter();
@@ -10,6 +11,7 @@ function useAuthentication() {
   const [role, setRole] = useState(config.role);
   const [username, setUsername] = useState('');
   const [token, setToken] = useState(typeof window !== 'undefined' ? localStorage.getItem('token') : null);
+  const { onSuccess, onError } = useNotification()
 
   useEffect(() => {
     if (token) {
@@ -28,8 +30,10 @@ function useAuthentication() {
       setAuth(true);
       setToken(userToken);
       router.replace("/");
+      onSuccess(`Welcome back, ${username}.`);
     } catch (error) {
       console.error(error);
+      onError(`Invalid Credentials`);
     }
   };
 
@@ -43,8 +47,10 @@ function useAuthentication() {
       setAuth(true);
       setToken(userToken);
       router.replace("/");
+      onSuccess(`Welcome to devbook, ${username}.`);
     } catch (error) {
       console.error(error);
+      onError(`Uername already taken`);
     }
   };
 
@@ -53,6 +59,7 @@ function useAuthentication() {
     localStorage.removeItem('token');
     setAuth(false);
     setToken('');
+    onSuccess(`You've been successfully logged out.`);
   };
 
   const fetchSelf = async (storedToken: string) => {

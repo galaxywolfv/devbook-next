@@ -14,10 +14,10 @@ const Navbar = () => {
                 <div className="flex flex-wrap items-center justify-between mx-auto p-4">
                     <a className="flex items-center select-none">
                         <img src="\android-chrome-512x512.png" className="h-8 mr-3 rounded" alt="devbook logo" />
-                        <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">devbook</span>
+                        <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">devbook (react)</span>
                     </a>
                     <div className="flex md:order-2">
-                        {role === Role.author && router.pathname !== '/books/publish' && (
+                        {auth && role === Role.author && router.pathname !== '/books/publish' && (
                             <Link href="/books/publish" className='mr-2'>
                                 <div className="text-white bg-black hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg font-semibold text-sm px-4 py-2 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Publish Book</div>
                             </Link>
